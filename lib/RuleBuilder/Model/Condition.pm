@@ -2,35 +2,49 @@ package RuleBuilder::Model::Condition;
 
 use v5.11;
 use Moo;
-use JSON::MaybeXS qw(encode_json decode_json);
-use Data::Dumper;
+use Types::Standard qw (Bool);
 use FindBin;
 use lib "$FindBin::Bin/../lib";
 use RuleBuilder::StructMatcherClient qw( evaluate );
 
-has metadata => ( is => 'rw' );
-has path     => ( is => 'rw' );
-has operator => ( is => 'rw' );
-has check    => ( is => 'rw' );
-has missingok => ( is => 'rw');
+has path     => ( 
+    is => 'rw', 
+    required => 1,
+);
+has operator => ( 
+    is => 'rw', 
+    default =>  sub { 'Equals' } 
+);
+has check    => ( 
+    is => 'rw',
+    required => 1
+);
+has missingok => ( 
+    is => 'rw',
+    default => sub { 1 },
+);
 
 sub to_hash {
     my $self = shift;
 
-    # return {
-    #     path     => $self->path,
-    #     operator => $self->operator,
-    #     check    => $self->check,
-    # };
-    say Dumper $self;
-    return $self;
+    # Do not add default to the hash
+    my $hash = {
+        path     => $self->path,
+        check    => $self->check,
+    };
+    # Add them if they differ from the default
+    $hash->{'operator'} = $self->operator unless ($self->operator eq 'Equals');
+    $hash->{'missingok'} = 0 unless $self->missingok;
+    return $hash;
 }
 
-sub to_json {
-    my $self = shift;
-    return encode_json( $self->to_hash );
-}
+# sub to_json {
+#     my $self = shift;
+#     return encode_json( $self->to_hash );
+# }
 
+# This is here to individualy test a condtion against
+# StructMatcher and validate it.
 sub test {
     my ($self, $data) = @_;
     die "Data must be a hashref" unless ref $data eq 'HASH';

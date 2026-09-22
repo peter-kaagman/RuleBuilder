@@ -24,4 +24,22 @@ ok(
     'Condition returns true when department differs from IT'
 );
 
+ok(
+    $condition->test({ role => 'Something' }),
+    'Condition returns true checking negative test on non existing property'
+);
+
+$condition = RuleBuilder::Model::Condition->new(
+    path     => 'department',
+    operator => 'NotEquals',
+    check    => 'IT',
+    missingok => 0
+);
+
+is(
+    $condition->test({ role => 'Something' }),
+    0,
+    'Condition returns false checking negative test on non existing property'
+);
+
 done_testing;

@@ -8,12 +8,21 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use RuleBuilder::StructMatcherClient qw( evaluate );
 
-has result =>	(is => 'rw');
-has conditions => (is => 'rw', default => sub { [] });
-has created =>(
+has result =>	(
+    is => 'rw',
+    required => 1,
+);
+has conditions => (
+    is => 'rw', 
+    default => sub { [] }
+);
+has metadata =>(
     is => 'rw',
     default => sub {
-        strftime('%Y-%m-%d', localtime);
+        {
+            created => strftime('%Y-%m-%d', localtime),
+            version => 1,
+        };
     },
 );
 
@@ -30,15 +39,17 @@ sub to_hash {
 		conditions => [
 			map { $_->to_hash} @{ $self->conditions}
 		],
+        metadata => $self->metadata,
 	};
 }
 
+# Here to enable RuleBuilder to check a specific ruleset
 sub test {
     my ($self, $data) = @_;
     die "Data must be a hashref" unless ref $data eq 'HASH';
 
     my $result = evaluate( 
-        $self->to_hash,		# The condtion
+        $self->to_hash,		# The condition
         $data,			# The data to test against
         'Test-ConditionSet',	# The PS function to call
         'Rule'			# The parameter name for the function

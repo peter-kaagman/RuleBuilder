@@ -48,4 +48,23 @@ ok(
     'ConditionSet returns undef on non-match'
 );
 
+
+is(
+    $conditionset->test({
+        department => 'IT',
+        location   => 'Hoorn',
+    }),
+    'Blaat',
+    'ConditionSet returns result on match'
+);
+
+is(
+    $conditionset->test({
+        department => 'IT',
+        location   => 'Grootebroek',
+    }),
+    undef,
+    'ConditionSet returns undef on non-match'
+);
+
 done_testing;

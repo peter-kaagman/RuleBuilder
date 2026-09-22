@@ -53,6 +53,8 @@ $data = {
 $result = $set->test($data);
 say "Testen met data:";
 say Dumper $data;
-say "Verwacht ???";
-say $result;
+say "ConditionSet:";
+say Dumper $set->to_hash();
+say "Verwacht undef";
+say "undef" unless defined $result;
 

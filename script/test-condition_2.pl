@@ -43,3 +43,34 @@ say "Verwacht 1";
 $result = $condition->test($data);
 say $result;
 
+$condition = RuleBuilder::Model::Condition->new(
+	path => 'role',
+	operator => 'NotEquals',
+	check => 'IT',
+	blaat => "zomaar wat",
+
+);
+say "MissingOk is true (default):";
+say Dumper $data;
+say "Verwacht 1";
+$result = $condition->test($data);
+say $result;
+
+$condition = RuleBuilder::Model::Condition->new(
+	path => 'role',
+	operator => 'NotEquals',
+	check => 'IT',
+	missingok => 0,
+	blaat => "zomaar wat",
+
+);
+say "MissingOk is false:";
+say Dumper $data;
+say "Verwacht 0";
+$result = $condition->test($data);
+say $result;
+
+
+
+
+
